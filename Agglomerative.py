@@ -112,7 +112,6 @@ class hierachical_agglomerative:
         data = self.get_data_list(file_path)
         similarity_file = "similarity_matrix.pkl"
         similarity = pickle.load(open(similarity_file,"rb"))
-
         cluster = []
         for i in range(len(similarity)):
             cluster.append([i])
@@ -136,20 +135,13 @@ class hierachical_agglomerative:
                 similarity[min_x][i] = min(similarity[min_x][i],similarity[min_y][i])
 
             del similarity[min_y]
-
-
-
             for row in similarity:
                 del row[min_y]
-
-            # for x in similarity:
-            #     print(x)
-
             print(cluster)
-
+		
 
 if __name__ == '__main__':
     hca = hierachical_agglomerative()
     """To generate SIMILARITY matrix"""
-    hca.generate_sim_matrix()
-    #hca.agglomerative()
+    #hca.generate_sim_matrix()
+    hca.agglomerative()
