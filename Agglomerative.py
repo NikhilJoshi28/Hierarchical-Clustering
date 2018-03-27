@@ -6,7 +6,7 @@ import plotly.plotly as py
 import plotly.figure_factory as ff
 
 
-class hierachical_agglomerative:
+class hierarchical_agglomerative:
     """
     	This function is used to parse datafile which is in festa format
 
@@ -141,7 +141,7 @@ class hierachical_agglomerative:
 		
 
 if __name__ == '__main__':
-    hca = hierachical_agglomerative()
+    hca = hierarchical_agglomerative()
     """To generate SIMILARITY matrix"""
     #hca.generate_sim_matrix()
     hca.agglomerative()

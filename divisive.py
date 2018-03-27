@@ -1,13 +1,13 @@
-from Agglomerative import hierachical_agglomerative as ha
+from Agglomerative import hierarchical_agglomerative as ha
 import random
 import pickle
 
-class hierachical_divisive:
+class hierarchical_divisive:
     def get_data(self,file_path):
         hca = ha()
         return hca.get_data_list(file_path)
 
-    def K_medians(self,cluster,no_cluster):
+    def K_medioids(self,cluster,no_cluster):
         similarity = pickle.load(open("similarity_matrix.pkl", "rb"))
         v = []
         new_centroids= []
@@ -44,6 +44,7 @@ class hierachical_divisive:
                     new_cluster[index].append(cluster[i])
 
                 for i in range(no_cluster):
+                    new_cluster[i].sort()
                     new_centroids[i]=new_cluster[i][int(len(new_cluster[i])/2)]
 
                 if v==new_centroids:
@@ -64,7 +65,7 @@ class hierachical_divisive:
         while len(Ncluster)!=len(data):
             for cluster in Ncluster:
                 if len(cluster)>1:
-                    new_cltr=self.K_medians(cluster,2)
+                    new_cltr=self.K_medioids(cluster,2)
                     #print(new_cltr)
                     for clt in new_cltr:
                         if clt!=None:
@@ -72,11 +73,11 @@ class hierachical_divisive:
 
                     Ncluster.remove(cluster)
                     break
-            print(len(Ncluster))
+            print((Ncluster))
 
 
 
 if __name__== '__main__':
-    hcd = hierachical_divisive()
+    hcd = hierarchical_divisive()
     hcd.divisive()
-    #print(hcd.K_medians([0,1],2))
+    #print(hcd.K_medioids([0,1,3,4,5,6,7,8,9],2))
