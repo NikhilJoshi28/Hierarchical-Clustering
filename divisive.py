@@ -3,6 +3,10 @@ import random
 import pickle
 
 class hierarchical_divisive:
+    def __init__(self):
+        self.linkage_mat = []
+        self.labels = []
+
     def get_data(self,file_path):
         hca = ha()
         return hca.get_data_list(file_path)
@@ -17,7 +21,8 @@ class hierarchical_divisive:
             new_clt = [[],[]]
             new_clt[0].append((cluster[0]))
             new_clt[1].append((cluster[1]))
-            return new_clt
+            points = (new_clt[0][0],new_clt[1][0])
+            return new_clt,similarity[new_clt[0][0]][new_clt[1][0]],points
 
         else:
             ran_sample = random.sample(range(0,N-1),no_cluster)
@@ -53,7 +58,14 @@ class hierarchical_divisive:
                     v=new_centroids
 
             #print('#',v,new_cluster)
-            return new_cluster
+            min_distance_points = 1000000
+            for i in range(len(new_cluster[0])):
+                for j in range(len(new_cluster[1])):
+                    if similarity[new_cluster[0][i]][new_cluster[1][j]]<min_distance_points:
+                        min_distance_points = similarity[new_cluster[0][i]][new_cluster[1][j]]
+                        points = (i,j)
+
+            return new_cluster,min_distance_points,points
 
 
     def divisive(self):
@@ -62,21 +74,50 @@ class hierarchical_divisive:
         for i in range(1,len(data)):
             Ncluster[0].append(i)
 
+        id = 0
         while len(Ncluster)!=len(data):
+            min_dis=1000000
             for cluster in Ncluster:
                 if len(cluster)>1:
-                    new_cltr=self.K_medioids(cluster,2)
-                    #print(new_cltr)
-                    for clt in new_cltr:
-                        if clt!=None:
-                            Ncluster.append(clt)
+                    new_cltr,min_dis_bwClusters,points=self.K_medioids(cluster,2)
+                    if min_dis>min_dis_bwClusters:
+                        min_dis=min_dis_bwClusters
+                        OptimalCluster = new_cltr
+                        to_remove_cluster = cluster
 
-                    Ncluster.remove(cluster)
-                    break
-            print((Ncluster))
+            linkage_row = []
+            no=0
+            for clt in OptimalCluster:
+                if clt!=None:
+                    Ncluster.append(clt)
+                    if len(clt)>1:
+                        linkage_row.append(float(id))
+                        id+=1
+                    elif len(clt)==1:
+                        linkage_row.append(float(id))
+                        id+=1
+
+                    no+=len(clt)
+
+            linkage_row.append(float(min_dis))
+            linkage_row.append(float(no))
 
 
+            Ncluster.remove(to_remove_cluster)
+            self.linkage_mat.append(linkage_row)
 
+
+            """
+                To print clustering distribution in each division (iteration)
+            """
+            #print((Ncluster))
+
+        """
+            For printing linkage matrix
+        """
+        self.labels = Ncluster
+        self.linkage_mat = sorted(self.linkage_mat, key=lambda x: x[0])
+        
 if __name__== '__main__':
     hcd = hierarchical_divisive()
     hcd.divisive()

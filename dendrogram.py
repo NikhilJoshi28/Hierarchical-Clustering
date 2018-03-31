@@ -6,8 +6,8 @@ from Agglomerative import hierarchical_agglomerative as ha
 from divisive import  hierarchical_divisive as hd
 import pickle
 
-class HCA_dendogram:
-    def plot_dendogram_agglomerative(self):
+class HCA_dendrogram:
+    def plot_dendrogram_agglomerative(self):
         similarity = pickle.load(open("similarity_matrix.pkl", "rb"))
         hca = ha()
         hca.agglomerative()
@@ -17,13 +17,26 @@ class HCA_dendogram:
         for i in range(len(data)):
             Y.append(i)
 
-        dendrogram(hca.dendogram(),
+        print(len(np.array(hca.link_mat)),len(Y))
+
+        dendrogram(np.array(hca.link_mat),
                    color_threshold=1,
                    labels=Y,
                    show_leaf_counts=True,
                    orientation='right')
         plt.show()
 
+        hcd = hd()
+        hcd.divisive()
+        print(np.array(hcd.linkage_mat))
+        dendrogram(np.array(hcd.linkage_mat),
+                   color_threshold=1,
+                   labels=hcd.labels,
+                   show_leaf_counts=True,
+                   orientation='left')
+
+        plt.show()
+
 if __name__ == "__main__":
-    dendo = HCA_dendogram()
-    dendo.plot_dendogram_agglomerative()
+    dendro = HCA_dendrogram()
+    dendro.plot_dendrogram_agglomerative()

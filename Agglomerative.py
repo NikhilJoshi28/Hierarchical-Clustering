@@ -114,10 +114,12 @@ class hierarchical_agglomerative:
         similarity_file = "similarity_matrix.pkl"
         similarity = pickle.load(open(similarity_file,"rb"))
         cluster = []
+        cluster_id = []
         for i in range(len(similarity)):
             cluster.append([i])
+            cluster_id.append([i])
 
-        #print(cluster)
+        id = 311
         while len(cluster) != 1:
             min_data = 1000000
             min_x=0
@@ -128,17 +130,12 @@ class hierarchical_agglomerative:
                         min_data = similarity[i][j];
                         min_x = i
                         min_y = j
-            """
-            flag=0
-            for i in range(self.link_mat):
-                if min_x == self.link_mat[i][0]:
-                    flag=1
-                    break
-            """
-
-            linkage_row = [float(min_x+1),float(min_y+1),float(similarity[min_x][min_y]),float(len(cluster[min_x])+len(cluster[min_y]))]
+            linkage_row = [float(cluster_id[min_y][0]),float(cluster_id[min_x][0]) , float(similarity[min_x][min_y]),float(len(cluster[min_x]) + len(cluster[min_y]))]
 
             cluster[min_x] = cluster[min_x]+cluster[min_y]
+            cluster_id[min_x]=[id]
+            id+=1
+            del cluster_id[min_y]
             del cluster[min_y]
 
             self.link_mat.append(linkage_row)
