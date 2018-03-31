@@ -10,14 +10,14 @@ class HCA_dendogram:
     def plot_dendogram_agglomerative(self):
         similarity = pickle.load(open("similarity_matrix.pkl", "rb"))
         hca = ha()
+        hca.agglomerative()
+        print(np.array(hca.link_mat))
         data = hca.get_data_list('data.festa')
         Y = []
         for i in range(len(data)):
             Y.append(i)
 
-        dis_mat =np.array(similarity)
-        linkage_mat = linkage(dis_mat,"single")
-        dendrogram(linkage_mat,
+        dendrogram(hca.dendogram(),
                    color_threshold=1,
                    labels=Y,
                    show_leaf_counts=True,

@@ -1,9 +1,6 @@
 import numpy as np
-import os
-import json
 import pickle
-import plotly.plotly as py
-import plotly.figure_factory as ff
+from scipy.cluster.hierarchy import linkage
 
 
 class hierarchical_agglomerative:
@@ -16,6 +13,10 @@ class hierarchical_agglomerative:
     	in one line.
 
     	"""
+
+    def __init__(self):
+        self.link_mat = []
+
     def read_festa(self,file):
         name = None
         seq = []
@@ -116,7 +117,7 @@ class hierarchical_agglomerative:
         for i in range(len(similarity)):
             cluster.append([i])
 
-        print(cluster)
+        #print(cluster)
         while len(cluster) != 1:
             min_data = 1000000
             min_x=0
@@ -127,9 +128,20 @@ class hierarchical_agglomerative:
                         min_data = similarity[i][j];
                         min_x = i
                         min_y = j
+            """
+            flag=0
+            for i in range(self.link_mat):
+                if min_x == self.link_mat[i][0]:
+                    flag=1
+                    break
+            """
+
+            linkage_row = [float(min_x+1),float(min_y+1),float(similarity[min_x][min_y]),float(len(cluster[min_x])+len(cluster[min_y]))]
 
             cluster[min_x] = cluster[min_x]+cluster[min_y]
             del cluster[min_y]
+
+            self.link_mat.append(linkage_row)
 
             for i in range(len(similarity[0])):
                 similarity[min_x][i] = min(similarity[min_x][i],similarity[min_y][i])
@@ -137,7 +149,16 @@ class hierarchical_agglomerative:
             del similarity[min_y]
             for row in similarity:
                 del row[min_y]
-            print(cluster)
+
+            #print(cluster)
+
+        #print(self.link_mat)
+
+    def dendogram(self):
+        similarity = pickle.load(open("similarity_matrix.pkl", "rb"))
+        dis_mat = np.array(similarity)
+        linkage_mat = linkage(dis_mat, "single")
+        return linkage_mat
 		
 
 if __name__ == '__main__':
@@ -145,3 +166,4 @@ if __name__ == '__main__':
     """To generate SIMILARITY matrix"""
     #hca.generate_sim_matrix()
     hca.agglomerative()
+    
