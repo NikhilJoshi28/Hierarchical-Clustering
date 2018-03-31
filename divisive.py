@@ -3,13 +3,31 @@ import random
 import pickle
 
 class hierarchical_divisive:
+    """
+        counstructor intiates varible as list
+        linkage_mat is used to store linkage which is further used to plot dendrogram
+        labels is used to store the order of datapoints to be represented in dendogram
+
+    """
+
     def __init__(self):
         self.linkage_mat = []
         self.labels = []
 
+    """
+        returns data matrix which is obtained after parsing the dataset
+    """
+
     def get_data(self,file_path):
         hca = ha()
         return hca.get_data_list(file_path)
+
+    """
+        K-mediods is used to break cluster in 2 sub-clusters
+        return new_clusters which is list of lists comprises clusters into which single cluster is broken 
+        also returns min_distance is minimun distance between two clusters
+        this functions also return point corresponding to minimum cluster
+    """
 
     def K_medioids(self,cluster,no_cluster):
         similarity = pickle.load(open("similarity_matrix.pkl", "rb"))
@@ -67,7 +85,13 @@ class hierarchical_divisive:
 
             return new_cluster,min_distance_points,points
 
-
+    """
+        divisive approach is top-down approach of clustering
+        we take generalised single cluster containing all datapoints
+        we divide clusters until we get clusters with single datapoint in each clusters
+        division of cluster is based on minimum error obtained when clustering is done
+        
+    """
     def divisive(self):
         data = self.get_data('data.festa')
         Ncluster = [[0]]
@@ -117,7 +141,7 @@ class hierarchical_divisive:
         """
         self.labels = Ncluster
         self.linkage_mat = sorted(self.linkage_mat, key=lambda x: x[0])
-        
+
 if __name__== '__main__':
     hcd = hierarchical_divisive()
     hcd.divisive()

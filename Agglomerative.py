@@ -4,6 +4,7 @@ from scipy.cluster.hierarchy import linkage
 
 
 class hierarchical_agglomerative:
+
     """
     	This function is used to parse datafile which is in festa format
 
@@ -12,7 +13,18 @@ class hierarchical_agglomerative:
     	next lines consist of data about DNA or amino acid sequence with atmost 82 characters
     	in one line.
 
-    	"""
+        class description
+
+        self.link_mat: it is a 4*N matrix which stores the linkage of clustering while making dendogram
+
+        def read_festa(self,file):
+        Used To parse festa file in dataset
+
+        def get_data_list(self,file_path):
+        stores parsed data in form of matrix in which first coloumn stores name and second
+        coloumn stores DNA sequence
+
+    """
 
     def __init__(self):
         self.link_mat = []
@@ -86,6 +98,14 @@ class hierarchical_agglomerative:
         #print(dp[N-1][M-1])
         return dp[N-1][M-1]
 
+    """
+        For each datapoint we calculate similarity to every other datapoint
+        N*N matrix is formed which is symetric matrix with diagonal elements 1
+        
+        similarity matrix is stored in pickle file to avoid similarity recalculation  
+        
+    """
+
     def get_similarity_matrix(self,data):
         N = len(data)
         similarity_matrix = [[0] * N for _ in range(N)]
@@ -106,6 +126,19 @@ class hierarchical_agglomerative:
         file_path = 'data.festa'
         data = self.get_data_list(file_path)
         similarity_matrix = self.get_similarity_matrix(data)
+
+    """
+        Agglomerative approach is buttom up aproach to clustering 
+        
+        first we take a generalised list which contains all the points in diffrent clusters 
+        
+        the clusters with minimum distance are clustered together and at the same time
+        similarity matrix is updated wrt to new clusters
+        
+        We combine 2 clusters till we get one whole cluster  
+        
+        
+    """
 
 
     def agglomerative(self):
@@ -150,13 +183,6 @@ class hierarchical_agglomerative:
             #print(cluster)
 
         #print(self.link_mat)
-
-    def dendogram(self):
-        similarity = pickle.load(open("similarity_matrix.pkl", "rb"))
-        dis_mat = np.array(similarity)
-        linkage_mat = linkage(dis_mat, "single")
-        return linkage_mat
-		
 
 if __name__ == '__main__':
     hca = hierarchical_agglomerative()
